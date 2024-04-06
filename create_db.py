@@ -7,5 +7,5 @@ conn = sq.connect('blog.sqlite3')
 
 with open('db.sql') as f:
     conn.executescript(f.read())
-    
+conn.commit()
 conn.close()
