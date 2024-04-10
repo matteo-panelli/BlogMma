@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }}</title>
+</head>
+<body>
+    <nav>
+        <!-- Qui inserisci la navbar -->
+    </nav>
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+    <h2>Comments</h2>
+    <form action="{{ url_for('add_comment', post_id=post.id) }}" method="POST">
+        <textarea name="comment" required></textarea>
+        <button type="submit">Add Comment</button>
+    </form>
+    <div>
+        {% for comment in comments %}
+            <div>
+                <p>{{ comment.content }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
