@@ -6,3 +6,4 @@ UPDATE posts SET created=CURRENT_TIMESTAMP;
 
 
 
+
