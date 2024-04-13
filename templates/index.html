@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>MMA Blog</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
-    <nav>
-        <!-- Qui inserisci la navbar -->
-    </nav>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('add_post') }}">Add Post</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <h1>MMA Blog Posts</h1>
-    <a href="{{ url_for('add_post') }}">Add a New Post</a>
-    <div>
+    <div class="main-content">
         {% for post in posts %}
-            <div>
-                <h2>{{ post.title }}</h2>
-                <p>{{ post.content }}</p>
-                <a href="{{ url_for('post', post_id=post.id) }}">Read Comments</a>
+            <div class="post-card">
+                <h2 class="post-title">{{ post.title }}</h2>
+                <p class="post-meta">Posted on {{ post.date }} by Admin</p>
+                <p class="post-content">{{ post.content }}</p>
+                <a href="{{ url_for('post', post_id=post.id) }}" class="post-read-more">Read Comments</a>
             </div>
         {% endfor %}
     </div>
