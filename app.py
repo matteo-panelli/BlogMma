@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, g
+from flask import Flask, render_template, request, redirect, url_for, g, session, flash
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+app.secret_key = 'tua_chiave_segreta'  # Sostituisci con una chiave segreta reale
 DATABASE = 'mma.db'
 
 def get_db():
@@ -32,12 +34,17 @@ def post(post_id):
 
 @app.route('/add_post', methods=['GET', 'POST'])
 def add_post():
+    if not session.get('logged_in'):
+        flash('Devi essere loggato per creare un post.')
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
         
         conn = get_db()
-        conn.execute('INSERT INTO posts (title, content) VALUES (?, ?)', (title, content))
+        conn.execute('INSERT INTO posts (title, content, author_id) VALUES (?, ?, ?)',
+                     (title, content, session['user_id']))
         conn.commit()
         
         return redirect(url_for('index'))
@@ -45,13 +52,64 @@ def add_post():
 
 @app.route('/add_comment/<int:post_id>', methods=['POST'])
 def add_comment(post_id):
+    if not session.get('logged_in'):
+        flash('Devi essere loggato per aggiungere un commento.')
+        return redirect(url_for('login'))
+
     comment = request.form['comment']
     
     conn = get_db()
-    conn.execute('INSERT INTO comments (post_id, content) VALUES (?, ?)', (post_id, comment))
+    conn.execute('INSERT INTO comments (post_id, content, author_id) VALUES (?, ?, ?)',
+                 (post_id, comment, session['user_id']))
     conn.commit()
     
     return redirect(url_for('post', post_id=post_id))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_password = generate_password_hash(password)
+
+        conn = get_db()
+        try:
+            conn.execute('INSERT INTO users (username, hashed_password) VALUES (?, ?)',
+                         (username, hashed_password))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            flash('Username già in uso.')
+            return render_template('register.html')
+        finally:
+            conn.close()
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        conn = get_db()
+        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        conn.close()
+
+        if user and check_password_hash(user['hashed_password'], password):
+            session['logged_in'] = True
+            session['user_id'] = user['id']
+            session['username'] = username
+            return redirect(url_for('index'))
+        flash('Username o password non validi.')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+# Assicurati che le altre funzioni dell'app siano al di sotto di questa linea...
 
 if __name__ == '__main__':
     app.run(debug=True)

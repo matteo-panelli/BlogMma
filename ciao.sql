@@ -11,4 +11,11 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (post_id) REFERENCES posts (id)
 )
 
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    hashed_password TEXT NOT NULL
+);
+
+
 INSERT INTO posts (title, content) VALUES ("trste","tesfsdfsd");
