@@ -43,7 +43,7 @@ def add_post():
         content = request.form['content']
         
         conn = get_db()
-        conn.execute('INSERT INTO posts (title, content, author_id) VALUES (?, ?, ?)',
+        conn.execute('INSERT INTO posts (title, content, user_id) VALUES (?, ?, ?)',
                      (title, content, session['user_id']))
         conn.commit()
         
@@ -59,7 +59,7 @@ def add_comment(post_id):
     comment = request.form['comment']
     
     conn = get_db()
-    conn.execute('INSERT INTO comments (post_id, content, author_id) VALUES (?, ?, ?)',
+    conn.execute('INSERT INTO comments (post_id, content, user_id) VALUES (?, ?, ?)',
                  (post_id, comment, session['user_id']))
     conn.commit()
     

@@ -1,9 +1,9 @@
 body {
     font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
     background-color: #f4f4f4;
     color: #333;
+    margin: 0;
+    padding: 0;
 }
 
 /* Center the post containers */
@@ -14,8 +14,8 @@ body {
     margin-top: 20px;
 }
 
-/* Style for individual posts */
-.post-card {
+/* Style for individual posts and add_post.html container */
+.post-card, .container {
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
@@ -40,7 +40,7 @@ body {
 }
 
 /* Content of the post */
-.post-content {
+.post-content, .form-group {
     font-size: 1em;
     line-height: 1.6;
     margin-bottom: 15px;
@@ -49,10 +49,10 @@ body {
 header {
     color: #fff;
     padding: 10px 20px;
+    background-color: #000; /* Ensure header background is set */
 }
 
 nav {
-    background-color: #000;
     padding: 10px 0;
 }
 
@@ -69,7 +69,7 @@ nav ul li {
 }
 
 nav ul li a {
-    color: white;
+    color: rgb(243, 236, 236);
     text-decoration: none;
     font-weight: bold;
 }
@@ -78,17 +78,14 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* Styles for form elements */
-.form-container {
-    max-width: 300px;
+/* Styles for form elements in add_post.html and possibly other forms */
+.form-container, .form-group {
+    max-width: 700px; /* unified width adjustment for forms */
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.form-group {
-    margin-bottom: 15px;
+    border-radius: 10px;
 }
 
 .form-group label {
@@ -97,7 +94,7 @@ nav ul li a:hover {
 }
 
 .form-group input[type="text"],
-.form-group input[type="password"] {
+.form-group textarea {
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
@@ -126,3 +123,7 @@ a {
 h2 {
     text-align: center;
 }
+
+
+
+
