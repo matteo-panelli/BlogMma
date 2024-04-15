@@ -11,11 +11,13 @@
 
     <header>
         <nav>
-            <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('add_post') }}">Add Post</a></li>
-            </ul>
-        </nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('add_post') }}">Add Post</a></li>
+                    <!-- Il resto dei tuoi link qui -->
+                    <li><a href="{{ url_for('login') }}" class="login-button">Login</a></li>
+                </ul>
+            </nav>
     </header>
     
     <h1>{{ post.title }}</h1>

@@ -47,9 +47,9 @@ body {
 }
 
 header {
+    background-color: #000;
     color: #fff;
     padding: 10px 20px;
-    background-color: #000; /* Ensure header background is set */
 }
 
 nav {
@@ -78,9 +78,9 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* Styles for form elements in add_post.html and possibly other forms */
-.form-container, .form-group {
-    max-width: 700px; /* unified width adjustment for forms */
+/* Styles for form elements in add_post.html and other forms */
+.form-container {
+    max-width: 700px; /* consistent with .post-card and .container */
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
@@ -123,7 +123,3 @@ a {
 h2 {
     text-align: center;
 }
-
-
-
-
