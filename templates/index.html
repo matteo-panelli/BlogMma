@@ -3,35 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>MMA Blog</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
-
-<body>
-
-    <header>
-        <nav>
-                <ul>
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('add_post') }}">Add Post</a></li>
-                    <!-- Il resto dei tuoi link qui -->
-                    <li><a href="{{ url_for('login') }}" class="login-button">Login</a></li>
-                </ul>
-            </nav>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <header class="bg-black text-white">
+        <nav class="container mx-auto flex justify-between">
+            <ul class="flex">
+                <li class="mr-6"><a href="{{ url_for('index') }}" class="text-white hover:text-gray-300">Home</a></li
+                <li class="mr-6"><a href="{{ url_for('add_post') }}" class="text-white hover:text-gray-300">Add Post</a></li>
+                <li><a href="{{ url_for('login') }}" class="text-white hover:text-gray-300">Login</a></li>
+            </ul>
+        </nav>
     </header>
-
-    <h1>MMA Blog Posts</h1>
-    <div class="main-content">
-        {% for post in posts %}
-            <div class="post-card">
-                <h2 class="post-title">{{ post.title }}</h2>
-                <p class="post-meta">Posted on {{ post.date }} by Admin</p>
-                <!-- Aggiungi questa riga per visualizzare la data di creazione -->
-                <p class="post-meta">Created on {{ post.created }}</p>
-                <p class="post-content">{{ post.content }}</p>
-                <a href="{{ url_for('post', post_id=post.id) }}" class="post-read-more">Read Comments</a>
+    <div class="container mx-auto mt-10">
+        <h1 class="text-3xl text-center mb-10">MMA Blog Posts</h1>
+        <div class="flex flex-col items-center">
+            {% for post in posts %}
+            <div class="bg-white rounded shadow p-6 w-full max-w-2xl mb-6">
+                <h2 class="text-2xl text-blue-600 mb-2">{{ post.title }}</h2>
+                <p class="text-sm text-gray-600 mb-2">Posted on {{ post.date }} by Admin</p>
+                <p class="text-sm text-gray-600 mb-4">Created on {{ post.created }}</p>
+                <p>{{ post.content }}</p>
+                <a href="{{ url_for('post', post_id=post.id) }}" class="text-green-500 hover:underline">Read Comments</a>
             </div>
-        {% endfor %}
-
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>

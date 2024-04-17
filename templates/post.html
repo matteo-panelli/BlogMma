@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ post.title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
-
-<body>
-
-
-    <header>
-        <nav>
-                <ul>
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('add_post') }}">Add Post</a></li>
-                    <!-- Il resto dei tuoi link qui -->
-                    <li><a href="{{ url_for('login') }}" class="login-button">Login</a></li>
-                </ul>
-            </nav>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <header class="bg-black text-white">
+        <nav class="container mx-auto flex justify-between">
+            <ul class="flex">
+                <li class="mr-6"><a href="{{ url_for('index') }}" class="text-white hover:text-gray-300">Home</a></li>
+                <li class="mr-6"><a href="{{ url_for('add_post') }}" class="text-white hover:text-gray-300">Add Post</a></li>
+                <li><a href="{{ url_for('login') }}" class="text-white hover:text-gray-300">Login</a></li>
+            </ul>
+        </nav>
     </header>
-    
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.content }}</p>
-    <h2>Comments</h2>
-    <form action="{{ url_for('add_comment', post_id=post.id) }}" method="POST"></form>
-        <textarea name="comment" required></textarea>
-        <button type="submit">Add Comment</button>
-    </form>
-    <div>
-        {% for comment in comments %}
-            <div>
+    <div class="container mx-auto max-w-lg mt-10 p-8 bg-white rounded shadow">
+        <h1 class="text-xl mb-5">{{ post.title }}</h1>
+        <p class="mb-5">{{ post.content }}</p>
+        <h2 class="text-lg mb-5">Comments</h2>
+        <form action="{{ url_for('add_comment', post_id=post.id) }}" method="POST" class="mb-6">
+            <textarea name="comment" required class="w-full p-2 border border-gray-300 rounded h-48 mb-4"></textarea>
+            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded">Add Comment</button>
+        </form>
+        <div>
+            {% for comment in comments %}
+            <div class="p-4 border-b border-gray-200">
                 <p>{{ comment.content }}</p>
             </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>
