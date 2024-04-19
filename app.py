@@ -85,6 +85,53 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
+
+@app.route('/edit_post/<int:post_id>', methods=['GET'])
+def edit_post_form(post_id):
+    if 'user_id' in session:
+        conn = get_db()
+        post = conn.execute('SELECT * FROM posts WHERE id = ?', (post_id,)).fetchone()
+        if post and post['user_id'] == session['user_id']:
+            return render_template('edit_post.html', post=post)
+        else:
+            flash('You do not have permission to edit this post.')
+    else:
+        flash('Please log in to edit posts.')
+    return redirect(url_for('index'))
+
+@app.route('/edit_post/<int:post_id>', methods=['POST'])
+def edit_post(post_id):
+    if 'user_id' in session and request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        conn = get_db()
+        conn.execute('UPDATE posts SET title = ?, content = ? WHERE id = ?', (title, content, post_id))
+        conn.commit()
+        flash('Post updated successfully.')
+        return redirect(url_for('post', post_id=post_id))
+    else:
+        flash('Invalid request or not logged in.')
+        return redirect(url_for('index'))
+
+
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    if 'user_id' in session:
+        conn = get_db()
+        post = conn.execute('SELECT * FROM posts WHERE id = ?', (post_id,)).fetchone()
+        if post and post['user_id'] == session['user_id']:
+            conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
+            conn.commit()
+            flash('Post deleted successfully.')
+        else:
+            flash('You do not have permission to delete this post.')
+    else:
+        flash('Please log in to delete posts.')
+    return redirect(url_for('index'))
+
+
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
