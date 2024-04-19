@@ -156,7 +156,7 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-# Assicurati che le altre funzioni dell'app siano al di sotto di questa linea...
+
 
 if __name__ == '__main__':
     app.run(debug=True)
