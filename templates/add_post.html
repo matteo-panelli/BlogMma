@@ -4,26 +4,83 @@
     <meta charset="UTF-8">
     <title>Add New Post</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .icon-large { width: 32px; height: 32px; }
+        header {
+            position: fixed;
+            top: 2rem; 
+            left: 50%;
+            width: calc(100% - 4rem); 
+            transform: translateX(-50%);
+            z-index: 50;
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a, .dropdown-content form {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: center; /* Centrato il testo per tutti gli elementi del dropdown */
+        }
+        .dropdown-content a:hover, .dropdown-content form:hover {background-color: #f1f1f1}
+        .dropdown:hover .dropdown-content {display: block;}
+        button {
+            background: none;
+            border: none;
+            color: inherit;
+            padding: 0;
+            cursor: pointer;
+            width: 100%; 
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
-    <header class="bg-black text-white">
-        <nav class="container mx-auto flex justify-center">
-            <ul class="flex">
-                <li class="mr-6"><a href="{{ url_for('index') }}"><svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                  </svg></a></li>
-                <li class="mr-6"><a href="{{ url_for('add_post') }}"><svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg></a></li>
-                <li><a href="{{ url_for('login') }}"><svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                  </svg></a></li>
-            </ul>
+    <header>
+        <nav class="container mx-auto flex justify-between items-center max-w-6xl">
+            
+            <div class="flex items-center space-x-4">
+                
+                <a href="{{ url_for('index') }}" class="text-gray-700 flex items-center">
+                    <svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                </a>
+               
+                <a href="{{ url_for('add_post') }}" class="text-gray-700 flex items-center">
+                    <svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </a>
+            </div>
+            
+            <div class="text-xl font-bold text-black">UFC</div>
+           
+            <div class="flex items-center space-x-4">
+              
+                <a href="{{ url_for('login') }}" class="text-gray-700 flex items-center">
+                    <svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                </a>
+            </div>
         </nav>
     </header>
     <div class="container mx-auto max-w-lg mt-10 p-8 bg-white rounded shadow">
         <h1 class="text-xl mb-5">Add a New MMA Blog Post</h1>
-        <form action="{{ url_for('add_post') }}" method="POST">
+         <form action="{{ url_for('add_post') }}" enctype="multipart/form-data" method="POST"> 
+            <!-- enctype="multipart/form-data" -->
             <div class="mb-6">
                 <label for="title" class="block mb-2">Title:</label>
                 <input type="text" name="title" required class="w-full p-2 border border-gray-300 rounded">
@@ -32,8 +89,11 @@
                 <label for="content" class="block mb-2">Content:</label>
                 <textarea name="content" required class="w-full p-2 border border-gray-300 rounded h-48"></textarea>
             </div>
+            <!-- <input class="formField" type="file" name="profile_image" accept="image/*"> -->
             <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded">Submit</button>
         </form>
     </div>
 </body>
 </html>
+
+

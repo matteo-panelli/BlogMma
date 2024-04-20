@@ -41,6 +41,7 @@ def add_post():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
+        # image = request.form["profile_image"]
         
         conn = get_db()
         conn.execute('INSERT INTO posts (title, content, user_id) VALUES (?, ?, ?)',
@@ -84,6 +85,7 @@ def register():
             conn.close()
         return redirect(url_for('login'))
     return render_template('register.html')
+
 
 
 @app.route('/edit_post/<int:post_id>', methods=['GET'])
@@ -146,15 +148,18 @@ def login():
             session['logged_in'] = True
             session['user_id'] = user['id']
             session['username'] = username
+            
+            # Verifica se l'utente è l'amministratore
+            if username == 'admin' and password == 'admin':
+                session['role'] = 'admin'
+                
             return redirect(url_for('index'))
+        
         flash('Username o password non validi.')
 
     return render_template('login.html')
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('index'))
+
 
 
 
