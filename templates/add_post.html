@@ -80,7 +80,7 @@
     <div class="container mx-auto max-w-lg mt-10 p-8 bg-white rounded shadow">
         <h1 class="text-xl mb-5">Add a New MMA Blog Post</h1>
          <form action="{{ url_for('add_post') }}" enctype="multipart/form-data" method="POST"> 
-            <!-- enctype="multipart/form-data" -->
+
             <div class="mb-6">
                 <label for="title" class="block mb-2">Title:</label>
                 <input type="text" name="title" required class="w-full p-2 border border-gray-300 rounded">
@@ -89,7 +89,7 @@
                 <label for="content" class="block mb-2">Content:</label>
                 <textarea name="content" required class="w-full p-2 border border-gray-300 rounded h-48"></textarea>
             </div>
-            <!-- <input class="formField" type="file" name="profile_image" accept="image/*"> -->
+            <input class="formField" type="file" name="profile_image" accept="image/*"> 
             <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded">Submit</button>
         </form>
     </div>

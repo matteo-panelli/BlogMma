@@ -1,10 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, g, session, flash
 import sqlite3
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'tua_chiave_segreta'  # Sostituisci con una chiave segreta reale
 DATABASE = 'mma.db'
+app.config['UPLOAD_FOLDER'] = './static/uploads'
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -41,13 +47,32 @@ def add_post():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
-        # image = request.form["profile_image"]
-        
-        conn = get_db()
-        conn.execute('INSERT INTO posts (title, content, user_id) VALUES (?, ?, ?)',
-                     (title, content, session['user_id']))
-        conn.commit()
-        
+        image = request.files['profile_image']
+        image_path = None
+        if image and allowed_file(image.filename):
+            # Fix the path concatenation issue
+            image_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+
+            image_path = os.path.join(image_folder, title + '_' + image.filename)
+            image.save(image_path)
+            # Assuming you want to save the image as a PNG file
+            image_path_db = os.path.join(app.config['UPLOAD_FOLDER'], title + '_' + image.filename)  # Relative path for the database
+
+
+        try:
+            conn = get_db()
+            conn.execute('INSERT INTO posts (title, content, user_id, image_path) VALUES (?, ?, ?, ?)',
+                        (title, content, session['user_id'], image_path_db))
+            conn.commit()
+        except Exception as e:
+            # Handle any exceptions, rollback changes if necessary
+            conn.rollback()
+            print("Error occurred:", e)
+        finally:
+            # Close the database connection
+            conn.close()
+
+        flash('Post con immagine aggiunto con successo.' if image_path else 'Post aggiunto con successo senza immagine.')
         return redirect(url_for('index'))
     return render_template('add_post.html')
 
