@@ -120,16 +120,25 @@ def edit_post(post_id):
 def delete_post(post_id):
     if 'user_id' in session:
         conn = get_db()
-        post = conn.execute('SELECT * FROM posts WHERE id = ?', (post_id,)).fetchone()
-        if post and post['user_id'] == session['user_id']:
-            conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
-            conn.commit()
-            flash('Post deleted successfully.')
+        user = conn.execute('SELECT ruolo FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+        if user:
+            post = conn.execute('SELECT * FROM posts WHERE id = ?', (post_id,)).fetchone()
+            if post:
+                # Check if user is admin or the owner of the post
+                if user['ruolo'] == 'admin' or post['user_id'] == session['user_id']:
+                    conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
+                    conn.commit()
+                    flash('Post deleted successfully.')
+                else:
+                    flash('You do not have permission to delete this post.')
+            else:
+                flash('Post not found.')
         else:
-            flash('You do not have permission to delete this post.')
+            flash('User not found.')
     else:
         flash('Please log in to delete posts.')
     return redirect(url_for('index'))
+
 
 
 
