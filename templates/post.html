@@ -8,7 +8,7 @@
         .icon-large { width: 32px; height: 32px; }
         header {
             position: fixed;
-            top: 2rem; /* Spacing from the top */
+            top: 1.5rem; /* Spacing from the top */
             left: 50%;
             width: calc(100% - 4rem); /* Full width with spacing from both sides */
             transform: translateX(-50%);
@@ -77,8 +77,8 @@
             </div>
         </nav>
     </header>
-    <div class="container mx-auto max-w-lg mt-10 p-8 bg-white rounded shadow">
-        <h1 class="text-xl mb-5">{{ post.title }}</h1>
+    <div class="container mx-auto max-w-lg mt-28 p-8 bg-white rounded shadow">
+        <h1 class="text-xl mb-5 text-center">{{ post.title }}</h1>
         <p class="mb-5">{{ post.content }}</p>
         <h2 class="text-lg mb-5">Comments</h2>
         <form action="{{ url_for('add_comment', post_id=post.id) }}" method="POST" class="mb-6">
