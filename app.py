@@ -76,40 +76,30 @@ def add_post():
         return redirect(url_for('index'))
     return render_template('add_post.html')
 
+
 @app.route('/add_comment/<int:post_id>', methods=['POST'])
 def add_comment(post_id):
     if not session.get('logged_in'):
         flash('Devi essere loggato per aggiungere un commento.')
         return redirect(url_for('login'))
 
-    comment = request.form['comment']
-    
-    conn = get_db()
-    conn.execute('INSERT INTO comments (post_id, content, user_id) VALUES (?, ?, ?)',
-                 (post_id, comment, session['user_id']))
-    conn.commit()
-    
-    return redirect(url_for('post', post_id=post_id))
+    comment_content = request.form['comment']
+    user_id = session['user_id']  # Assumendo che l'ID dell'utente sia salvato in sessione quando si effettua il login
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        hashed_password = generate_password_hash(password)
-
+    try:
         conn = get_db()
-        try:
-            conn.execute('INSERT INTO users (username, hashed_password) VALUES (?, ?)',
-                         (username, hashed_password))
-            conn.commit()
-        except sqlite3.IntegrityError:
-            flash('Username già in uso.')
-            return render_template('register.html')
-        finally:
-            conn.close()
-        return redirect(url_for('login'))
-    return render_template('register.html')
+        conn.execute('INSERT INTO comments (post_id, content, user_id) VALUES (?, ?, ?)',
+                     (post_id, comment_content, user_id))
+        conn.commit()
+        flash('Commento aggiunto con successo.')
+    except Exception as e:
+        conn.rollback()
+        flash('Errore durante l\'inserimento del commento.')
+        print("Error occurred:", e)
+    finally:
+        conn.close()
+
+    return redirect(url_for('post', post_id=post_id))
 
 
 
@@ -126,6 +116,7 @@ def edit_post_form(post_id):
         flash('Please log in to edit posts.')
     return redirect(url_for('index'))
 
+
 @app.route('/edit_post/<int:post_id>', methods=['POST'])
 def edit_post(post_id):
     if 'user_id' in session and request.method == 'POST':
@@ -139,6 +130,8 @@ def edit_post(post_id):
     else:
         flash('Invalid request or not logged in.')
         return redirect(url_for('index'))
+
+
 
 
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
@@ -163,6 +156,67 @@ def delete_post(post_id):
     else:
         flash('Please log in to delete posts.')
     return redirect(url_for('index'))
+
+
+
+@app.route('/delete_comment/<int:post_id>/<int:comment_id>', methods=['POST'])
+def delete_comment(post_id, comment_id):
+    if 'user_id' in session:
+        conn = get_db()
+        user_role = conn.execute('SELECT ruolo FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+        comment = conn.execute('SELECT * FROM comments WHERE id = ? AND post_id = ?', (comment_id, post_id)).fetchone()
+        if comment:
+            # Check if user is admin or the owner of the comment
+            if user_role['ruolo'] == 'admin' or comment['user_id'] == session['user_id']:
+                conn.execute('DELETE FROM comments WHERE id = ? AND post_id = ?', (comment_id, post_id))
+                conn.commit()
+                flash('Commento eliminato con successo.')
+            else:
+                flash('Non hai i permessi per eliminare questo commento.')
+        else:
+            flash('Commento non trovato.')
+        conn.close()
+    else:
+        flash('Effettua il login per eliminare i commenti.')
+    return redirect(url_for('post', post_id=post_id))
+
+
+
+@app.route('/edit_comment/<int:post_id>/<int:comment_id>', methods=['GET', 'POST'])
+def edit_comment(post_id, comment_id):
+    if 'user_id' not in session:
+        flash('Effettua il login per modificare i commenti.')
+        return redirect(url_for('login'))
+
+    conn = get_db()
+    comment = conn.execute('SELECT * FROM comments WHERE id = ? AND post_id = ?', (comment_id, post_id)).fetchone()
+
+    if comment is None:
+        flash('Commento non trovato.')
+        return redirect(url_for('post', post_id=post_id))
+
+    user_role = conn.execute('SELECT ruolo FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+    is_authorized = comment['user_id'] == session['user_id'] or user_role['ruolo'] == 'admin'
+
+    if request.method == 'GET':
+        if is_authorized:
+            return render_template('edit_comment.html', comment=comment, post_id=post_id)
+        else:
+            flash('Non hai i permessi per modificare questo commento.')
+            return redirect(url_for('post', post_id=post_id))
+
+    elif request.method == 'POST':
+        if is_authorized:
+            content = request.form['content']
+            conn.execute('UPDATE comments SET content = ? WHERE id = ? AND post_id = ?', (content, comment_id, post_id))
+            conn.commit()
+            flash('Commento aggiornato con successo.')
+            return redirect(url_for('post', post_id=post_id))
+        else:
+            flash('Non hai i permessi per modificare questo commento.')
+            return redirect(url_for('post', post_id=post_id))
+    conn.close()
+
 
 
 
@@ -195,6 +249,25 @@ def login():
 
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_password = generate_password_hash(password)
+
+        conn = get_db()
+        try:
+            conn.execute('INSERT INTO users (username, hashed_password) VALUES (?, ?)',
+                         (username, hashed_password))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            flash('Username già in uso.')
+            return render_template('register.html')
+        finally:
+            conn.close()
+        return redirect(url_for('login'))
+    return render_template('register.html')
 
 
 if __name__ == '__main__':
