@@ -31,12 +31,36 @@ def index():
     posts = conn.execute('SELECT * FROM posts').fetchall()
     return render_template('index.html', posts=posts)
 
+
+
 @app.route('/post/<int:post_id>')
 def post(post_id):
     conn = get_db()
     post = conn.execute('SELECT * FROM posts WHERE id = ?', (post_id,)).fetchone()
     comments = conn.execute('SELECT * FROM comments WHERE post_id = ?', (post_id,)).fetchall()
     return render_template('post.html', post=post, comments=comments)
+
+
+
+@app.route('/news')
+def news():
+    # Fake news data as an example, replace with your database query
+    news_data = [
+        {
+            "image_path": "imm/Manon-Fiorot-def.-Erin-Blanchfield-UFC-on-ESPN-54-622.webp",
+            "title": "Fiorot wants backup role for Grasso vs. Shevchenko 3",
+            "content": "Manon Fiorot is eager to ensure her next fight is for the UFC women's flyweight title, even if that means taking it in ideal..."
+        },
+        {
+            "image_path": "imm/ufc-300-justin-gaethje-exit.webp",
+            "title": "Gaethje vows he's not done after brutal UFC 300 knockout",
+            "content": "Justin Gaethje reflects on his future after a tough battle at UFC 300."
+        },
+        # ... other news items
+    ]
+    return render_template('news.html', news_data=news_data)
+
+
 
 @app.route('/add_post', methods=['GET', 'POST'])
 def add_post():
