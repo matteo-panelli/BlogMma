@@ -42,23 +42,10 @@ def post(post_id):
 
 
 
-@app.route('/news')
+@app.route('/classifica')
 def news():
-    # Fake news data as an example, replace with your database query
-    news_data = [
-        {
-            "image_path": "imm/Manon-Fiorot-def.-Erin-Blanchfield-UFC-on-ESPN-54-622.webp",
-            "title": "Fiorot wants backup role for Grasso vs. Shevchenko 3",
-            "content": "Manon Fiorot is eager to ensure her next fight is for the UFC women's flyweight title, even if that means taking it in ideal..."
-        },
-        {
-            "image_path": "imm/ufc-300-justin-gaethje-exit.webp",
-            "title": "Gaethje vows he's not done after brutal UFC 300 knockout",
-            "content": "Justin Gaethje reflects on his future after a tough battle at UFC 300."
-        },
-        # ... other news items
-    ]
-    return render_template('news.html', news_data=news_data)
+    
+    return render_template('classifica.html')
 
 
 

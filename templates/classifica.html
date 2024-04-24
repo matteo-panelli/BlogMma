@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classifica Combattenti</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        
+        .ranking-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            padding-top: 100px; /* space for navbar */
+        }
+        .division {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Center the text for the fighters */
+        }
+        .division h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d35400;
+            text-align: center;
+            position: relative;
+            color: #050403;
+        }
+        .fighter {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px 0;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+          }
+          .fighter-number {
+            font-size: 24px;
+            color: #333;
+            margin-right: 10px;
+            font-weight: bold;
+            width: 30px;
+            
+          }
+        .fighter img {
+            height: 120px; /* Increased image size */
+            width: auto;
+            border-radius: 4px;
+            margin-bottom: 10px; /* space between image and text */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .fighter p {
+            font-size: 18px;
+            color: #333;
+            margin: 0; /* reset margins */
+        }
+        .icon-large { width: 32px; height: 32px; }
+        header {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            width: calc(100% - 4rem);
+            transform: translateX(-50%);
+            z-index: 50;
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+        }
+        .nav-icons a {
+            margin-right: 50px; 
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <header>
+        <nav class="container mx-auto flex justify-between items-center max-w-6xl">
+            
+            <div class="flex items-center nav-icons">
+               
+                <a href="{{ url_for('index') }}" class="text-gray-700 flex items-center">
+                    <svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.0" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                </a>
+               
+                <a href="{{ url_for('add_post') }}" class="text-gray-700 flex items-center">
+                    <svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.0" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </a>
+            
+                <a href="{{ url_for('news') }}" class="text-gray-700 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
+                      </svg>
+                </a>  
+            </div>
+            
+            <div class="nav-title">
+                <div class="text-xl font-bold text-black "style="position: relative; left: -120px;">UFC</div>
+            </div>
+           
+            <div class="flex items-center space-x-4">
+       
+                <a href="{{ url_for('login') }}" class="text-gray-700 flex items-center">
+                    <svg class="icon-large" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.0" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    </header>
+<div class="ranking-container">
+  
+  <!-- Men's Pound-for-Pound Top Rank -->
+  <div class="division">
+    <h2>Classifica Pound-for-Pound Uomini</h2>
+    <div class="fighter">
+      <img src="{{ url_for('static', filename='classifica/MAKHACHEV_ISLAM_BELT_10-21.png') }}" alt="Islam Makhachev">
+      
+    </div>
+    <div class="fighter"><p>1. Islam Makhachev</p></div>
+    <div class="fighter"><p>2. Jon Jones</p></div>
+    <div class="fighter"><p>3. Leon Edwards</p></div>
+    <div class="fighter"><p>4. Alex Pereira</p></div>
+    <div class="fighter"><p>5. Ilia Topuria</p></div>
+    <div class="fighter"><p>6. Sean O'Malley</p></div>
+    <div class="fighter"><p>7. Alexander Volkanovski</p></div>
+  </div>
+  
+  <!-- Flyweight Division -->
+  <div class="division">
+    <h2>Divisione Pesi Mosca</h2>
+    <div class="fighter">
+      <img src="{{ url_for('static', filename='classifica/PANTOJA_ALEXANDRE_12-16.png') }}" alt="Alexandre Pantoja">
+    </div>
+    <div class="fighter"><p>1. Brandon Royval</p></div>
+    <div class="fighter"><p>2. Brandon Moreno</p></div>
+    <div class="fighter"><p>3. Amir Albazi</p></div>
+    <div class="fighter"><p>4. Kai Kara-France</p></div>
+    <div class="fighter"><p>5. Matheus Nicolau</p></div>
+    <div class="fighter"><p>6. Manel Kape</p></div>
+    <div class="fighter"><p>7. Muhammad Mokaev</p></div>
+
+  </div>
+  
+  <!-- Bantamweight Division -->
+  <div class="division">
+    <h2>Divisione Pesi Gallo</h2>
+    <div class="fighter">
+      <img src="{{ url_for('static', filename='classifica/OMALLEY_SEAN_BELT_03-09.png') }}" alt="Sean O'Malley">
+    </div>
+    <div class="fighter"><p>1. Merab Dvalishvili</p></div>
+    <div class="fighter"><p>2. Cory Sandhagen</p></div>
+    <div class="fighter"><p>3. Petr Yan</p></div>
+    <div class="fighter"><p>4. Marlon Vera</p></div>
+    <div class="fighter"><p>5. Henry Cejudo</p></div>
+    <div class="fighter"><p>6. Deiveson Figueiredo</p></div>
+    <div class="fighter"><p>7. Song Yadong</p></div>
+
+  </div>
+  
+  <!-- Featherweight Division -->
+  <div class="division">
+    <h2>Divisione Pesi Piuma</h2>
+    <div class="fighter">
+      <img src="{{ url_for('static', filename='classifica/TOPURIA_ILIA_BELT-298.png') }}" alt="Ilia Topuria">
+    </div>
+    <div class="fighter"><p>1. Alexander Volkanovski</p></div>
+    <div class="fighter"><p>2. Max Holloway</p></div>
+    <div class="fighter"><p>3. Brian Ortega</p></div>
+    <div class="fighter"><p>4. Yair Rodriguez</p></div>
+    <div class="fighter"><p>5. Movsar Evloev</p></div>
+    <div class="fighter"><p>6. Arnold Allen</p></div>
+    <div class="fighter"><p>7. Josh Emmett</p></div>
+ 
+  </div>
+
+</div>
+
+</body>
+</html>
