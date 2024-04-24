@@ -28,7 +28,13 @@ def close_connection(exception):
 @app.route('/')
 def index():
     conn = get_db()
-    posts = conn.execute('SELECT * FROM posts').fetchall()
+    # Join the posts table with the users table to get the username along with the post details
+    posts = conn.execute('''
+    SELECT *
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    ORDER BY posts.id DESC
+    ''').fetchall()
     return render_template('index.html', posts=posts)
 
 
