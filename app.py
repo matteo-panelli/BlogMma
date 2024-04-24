@@ -58,34 +58,39 @@ def add_post():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
-        image = request.files['profile_image']
-        image_path = None
+        image = request.files.get('profile_image')  # Use .get() to avoid KeyError if 'profile_image' is not in the form
+        image_path_db = None
+
         if image and allowed_file(image.filename):
             # Fix the path concatenation issue
             image_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-
-            image_path = os.path.join(image_folder, title + '_' + image.filename)
+            image_filename = title + '_' + image.filename
+            image_path = os.path.join(image_folder, image_filename)
             image.save(image_path)
             # Assuming you want to save the image as a PNG file
-            image_path_db = os.path.join(app.config['UPLOAD_FOLDER'], title + '_' + image.filename)  # Relative path for the database
-
+            image_path_db = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)  # Relative path for the database
 
         try:
             conn = get_db()
             conn.execute('INSERT INTO posts (title, content, user_id, image_path) VALUES (?, ?, ?, ?)',
-                        (title, content, session['user_id'], image_path_db))
+                         (title, content, session['user_id'], image_path_db))
             conn.commit()
         except Exception as e:
             # Handle any exceptions, rollback changes if necessary
             conn.rollback()
+            flash('Errore durante l\'inserimento del post.')
             print("Error occurred:", e)
         finally:
             # Close the database connection
             conn.close()
 
-        flash('Post con immagine aggiunto con successo.' if image_path else 'Post aggiunto con successo senza immagine.')
+        flash_message = 'Post aggiunto con successo.'
+        if image_path_db:
+            flash_message = 'Post con immagine aggiunto con successo.'
+        flash(flash_message)
         return redirect(url_for('index'))
     return render_template('add_post.html')
+
 
 
 @app.route('/add_comment/<int:post_id>', methods=['POST'])
