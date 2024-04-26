@@ -4,7 +4,7 @@ import os
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = 'tua_chiave_segreta'  # Sostituisci con una chiave segreta reale
+app.secret_key = 'tua_chiave_segreta'  
 DATABASE = 'mma.db'
 app.config['UPLOAD_FOLDER'] = './static/uploads'
 
@@ -25,10 +25,10 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
+
 @app.route('/')
 def index():
     conn = get_db()
-    # Join the posts table with the users table to get the username along with the post details
     posts = conn.execute('''
     SELECT *
     FROM posts
@@ -201,43 +201,6 @@ def delete_comment(post_id, comment_id):
     else:
         flash('Effettua il login per eliminare i commenti.')
     return redirect(url_for('post', post_id=post_id))
-
-
-
-@app.route('/edit_comment/<int:post_id>/<int:comment_id>', methods=['GET', 'POST'])
-def edit_comment(post_id, comment_id):
-    if 'user_id' not in session:
-        flash('Effettua il login per modificare i commenti.')
-        return redirect(url_for('login'))
-
-    conn = get_db()
-    comment = conn.execute('SELECT * FROM comments WHERE id = ? AND post_id = ?', (comment_id, post_id)).fetchone()
-
-    if comment is None:
-        flash('Commento non trovato.')
-        return redirect(url_for('post', post_id=post_id))
-
-    user_role = conn.execute('SELECT ruolo FROM users WHERE id = ?', (session['user_id'],)).fetchone()
-    is_authorized = comment['user_id'] == session['user_id'] or user_role['ruolo'] == 'admin'
-
-    if request.method == 'GET':
-        if is_authorized:
-            return render_template('edit_comment.html', comment=comment, post_id=post_id)
-        else:
-            flash('Non hai i permessi per modificare questo commento.')
-            return redirect(url_for('post', post_id=post_id))
-
-    elif request.method == 'POST':
-        if is_authorized:
-            content = request.form['content']
-            conn.execute('UPDATE comments SET content = ? WHERE id = ? AND post_id = ?', (content, comment_id, post_id))
-            conn.commit()
-            flash('Commento aggiornato con successo.')
-            return redirect(url_for('post', post_id=post_id))
-        else:
-            flash('Non hai i permessi per modificare questo commento.')
-            return redirect(url_for('post', post_id=post_id))
-    conn.close()
 
 
 
