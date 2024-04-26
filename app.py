@@ -64,17 +64,17 @@ def add_post():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
-        image = request.files.get('profile_image')  # Use .get() to avoid KeyError if 'profile_image' is not in the form
+        image = request.files.get('profile_image')  
         image_path_db = None
 
         if image and allowed_file(image.filename):
-            # Fix the path concatenation issue
+            
             image_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
             image_filename = title + '_' + image.filename
             image_path = os.path.join(image_folder, image_filename)
             image.save(image_path)
-            # Assuming you want to save the image as a PNG file
-            image_path_db = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)  # Relative path for the database
+           
+            image_path_db = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)  
 
         try:
             conn = get_db()
@@ -82,12 +82,12 @@ def add_post():
                          (title, content, session['user_id'], image_path_db))
             conn.commit()
         except Exception as e:
-            # Handle any exceptions, rollback changes if necessary
+            y
             conn.rollback()
             flash('Errore durante l\'inserimento del post.')
             print("Error occurred:", e)
         finally:
-            # Close the database connection
+           
             conn.close()
 
         flash_message = 'Post aggiunto con successo.'
@@ -106,7 +106,7 @@ def add_comment(post_id):
         return redirect(url_for('login'))
 
     comment_content = request.form['comment']
-    user_id = session['user_id']  # Assumendo che l'ID dell'utente sia salvato in sessione quando si effettua il login
+    user_id = session['user_id']  
 
     try:
         conn = get_db()
@@ -164,7 +164,7 @@ def delete_post(post_id):
         if user:
             post = conn.execute('SELECT * FROM posts WHERE id = ?', (post_id,)).fetchone()
             if post:
-                # Check if user is admin or the owner of the post
+                
                 if user['ruolo'] == 'admin' or post['user_id'] == session['user_id']:
                     conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
                     conn.commit()
@@ -188,7 +188,7 @@ def delete_comment(post_id, comment_id):
         user_role = conn.execute('SELECT ruolo FROM users WHERE id = ?', (session['user_id'],)).fetchone()
         comment = conn.execute('SELECT * FROM comments WHERE id = ? AND post_id = ?', (comment_id, post_id)).fetchone()
         if comment:
-            # Check if user is admin or the owner of the comment
+           
             if user_role['ruolo'] == 'admin' or comment['user_id'] == session['user_id']:
                 conn.execute('DELETE FROM comments WHERE id = ? AND post_id = ?', (comment_id, post_id))
                 conn.commit()
@@ -222,7 +222,7 @@ def login():
             session['user_id'] = user['id']
             session['username'] = username
             
-            # Verifica se l'utente è l'amministratore
+            
             if username == 'admin' and password == 'admin':
                 session['role'] = 'admin'
                 
